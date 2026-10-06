@@ -1,0 +1,56 @@
+async function inviaMessaggio() {
+    const input = document.getElementById('userInput');
+    const testo = input.value.trim();
+    if(!testo) return;
+
+    const modello = document.getElementById('modelSelector').value;
+    const welcome = document.getElementById('welcomeScreen');
+    const container = document.getElementById('messagesContainer');
+
+    // Recupera dinamicamente le opzioni salvate durante l'onboarding
+    const nome = localStorage.getItem('solven_user_name') || 'Francesco';
+    const tono = localStorage.getItem('solven_ai_tone') || 'bilanciato';
+    const scopo = localStorage.getItem('solven_ai_scope') || 'studio';
+    const interessi = JSON.parse(localStorage.getItem('solven_user_interests')) || [];
+
+    welcome.style.display = 'none';
+    container.style.display = 'flex';
+
+    container.innerHTML += `<div class="msg user">${testo}</div>`;
+    input.value = '';
+    autoGrow(input);
+    checkInput();
+    container.scrollTop = container.scrollHeight;
+
+    if(container.querySelectorAll('.msg').length <= 1) {
+        const troncato = testo.length > 25 ? testo.substring(0, 25) + '...' : testo;
+        cronologiaChat.unshift({ id: Date.now(), titolo: troncato, messaggi: [] });
+        renderCronologia();
+    }
+
+    try {
+        // Invio completo di tutti i dati anagrafici e comportamentali a Render
+        const response = await fetch('https://onrender.com', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                messaggio: testo, 
+                versione_ia: modello,
+                nome_utente: nome,
+                tono_ia: tono,
+                scopo_ia: scopo,
+                interessi_utente: interessi
+            })
+        });
+        const dati = await response.json();
+        
+        container.innerHTML += `
+            <div class="msg bot">
+                ${dati.risposta}
+                <div class="save-msg-btn" onclick="salvaMessaggioInRaccolta('${dati.risposta.replace(/'/g, "\\'")}')">💾</div>
+            </div>`;
+    } catch (error) {
+        container.innerHTML += `<div class="msg bot" style="color:#ff3b30;">Errore. Assicurati che l'API su Render sia attiva ed in esecuzione!</div>`;
+    }
+    container.scrollTop = container.scrollHeight;
+}
