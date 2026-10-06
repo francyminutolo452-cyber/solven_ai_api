@@ -1,0 +1,52 @@
+async function gestisciFlussoIniziale() {
+    const email = document.getElementById('emailField').value.trim();
+    const password = document.getElementById('passwordField').value.trim();
+    const nomeInput = document.getElementById('nameField').value.trim();
+
+    if (!email || !password) {
+        alert("Inserisci email e password per continuare.");
+        return;
+    }
+
+    // 🔵 REGISTRAZIONE
+    if (window.statoCorrenteTab === 'registrati') {
+        const response = await fetch("https://IL-TUO-URL-RENDER/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: nomeInput, email, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            localStorage.setItem("solven_logged_in", "true");
+            localStorage.setItem("solven_user_email", email);
+            localStorage.setItem("solven_user_name", nomeInput);
+            cambiaFaseOnboarding(2);
+        } else {
+            alert(data.message);
+        }
+
+        return;
+    }
+
+    // 🟢 LOGIN
+    if (window.statoCorrenteTab === 'accedi') {
+        const response = await fetch("https://IL-TUO-URL-RENDER/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            localStorage.setItem("solven_logged_in", "true");
+            localStorage.setItem("solven_user_email", email);
+            localStorage.setItem("solven_user_name", data.name);
+            cambiaFaseOnboarding(2);
+        } else {
+            alert(data.message);
+        }
+    }
+}
