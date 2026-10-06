@@ -1,0 +1,16 @@
+{
+  "name": "solven-ai-api",
+  "version": "1.0.0",
+  "description": "Backend ufficiale di Solven AI",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.0.0",
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5"
+  }
+}
