@@ -3,82 +3,89 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import cors from "cors";
 
+// MODELLO USER
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  password: String
+});
+
+const User = mongoose.model("User", userSchema);
+
+// APP EXPRESS
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// 🔗 CONNESSIONE A MONGODB ATLAS
-// Sostituisci LA_TUA_STRINGA_ATLAS con la tua connection string
-mongoose.connect("LA_TUA_STRINGA_ATLAS", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log("MongoDB Atlas connesso"))
-.catch(err => console.error("Errore connessione MongoDB:", err));
-
-// 📌 Schema utente
-const UserSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String
-});
-
-const User = mongoose.model("User", UserSchema);
-
-// 🟣 REGISTRAZIONE
+// ROTTA REGISTER
 app.post("/register", async (req, res) => {
+  try {
     const { name, email, password } = req.body;
 
-    try {
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.json({ success: false, message: "Email già registrata" });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = new User({
-            name,
-            email,
-            password: hashedPassword
-        });
-
-        await newUser.save();
-
-        res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.json({ success: false, message: "Errore server" });
+    // Controllo utente esistente
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ error: "Email già registrata" });
     }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Salva utente
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword
+    });
+
+    await user.save();
+
+    res.json({ success: true, message: "Registrazione completata" });
+
+  } catch (err) {
+    console.error("Errore nella registrazione:", err);
+    res.status(500).json({ error: "Errore server" });
+  }
 });
 
-// 🟢 LOGIN
+// ROTTA LOGIN
 app.post("/login", async (req, res) => {
+  try {
     const { email, password } = req.body;
 
-    try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.json({ success: false, message: "Utente non trovato" });
-        }
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ error: "Utente non trovato" });
 
-        const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) {
-            return res.json({ success: false, message: "Password errata" });
-        }
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(400).json({ error: "Password errata" });
 
-        res.json({
-            success: true,
-            name: user.name
-        });
-    } catch (err) {
-        console.error(err);
-        res.json({ success: false, message: "Errore server" });
-    }
+    res.json({ success: true, message: "Login effettuato" });
+
+  } catch (err) {
+    console.error("Errore nel login:", err);
+    res.status(500).json({ error: "Errore server" });
+  }
 });
 
-// 🚀 AVVIO SERVER (Render usa process.env.PORT)
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server attivo su porta ${PORT}`);
-});
+// AVVIO SERVER SOLO DOPO CONNESSIONE ATLAS
+async function startServer() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      bufferCommands: false
+    });
+
+    console.log("MongoDB Atlas connesso");
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server attivo su porta ${PORT}`);
+    });
+
+  } catch (err) {
+    console.error("Errore connessione MongoDB:", err);
+  }
+}
+
+startServer();
