@@ -1,4 +1,4 @@
-<h1>Registrati a Solven AI</h1>
+<h1>Registrati su Solven AI</h1>
 
 <form onsubmit="register(event)">
   <input type="text" id="name" placeholder="Nome" required>
@@ -22,8 +22,11 @@ async function register(e) {
   });
 
   const data = await res.json();
+  console.log(data);
+
   alert(data.message);
 
+  // 🔥 Dopo la registrazione → vai al login
   window.location.href = "login.html";
 }
 </script>
