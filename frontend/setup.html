@@ -1,10 +1,25 @@
-<h1>Configura Solven AI</h1>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Configurazione Solven AI</title>
+</head>
+<body>
 
-<button onclick="completeSetup()">Completa configurazione</button>
+  <h1>Solven AI è stata configurata</h1>
+  <p>Tutto è pronto! Puoi iniziare ad usare l’app.</p>
 
-<script>
-function completeSetup() {
-  alert("Solven AI è stata configurata!");
-  window.location.href = "dashboard.html";
-}
-</script>
+  <button onclick="chiudi()">Chiudi</button>
+
+  <script>
+    function chiudi() {
+      // Messaggio finale
+      alert("Solven AI è stata configurata");
+
+      // Reindirizza alla pagina principale dell'app
+      window.location.href = "dashboard.html";
+    }
+  </script>
+
+</body>
+</html>
