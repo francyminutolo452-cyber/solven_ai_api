@@ -20,8 +20,7 @@ async function login(e) {
   });
 
   const data = await res.json();
+  console.log(data); // IMPORTANTISSIMO
   alert(data.message);
-
-  window.location.href = "setup.html";
 }
 </script>
