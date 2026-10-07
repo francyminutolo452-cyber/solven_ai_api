@@ -20,12 +20,10 @@ async function login(e) {
   });
 
   const data = await res.json();
-  console.log(data); // Per vedere cosa arriva dal backend
+  console.log(data);
 
-  // Mostra il messaggio del backend
   alert(data.message);
 
-  // 🔥 DOPO IL LOGIN → vai alla pagina di configurazione
-  window.location.href = "setup.html";
+  window.location.href = "setup.html";   // 🔥 Redirect dopo login
 }
 </script>
