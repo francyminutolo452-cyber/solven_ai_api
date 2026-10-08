@@ -1,24 +1,45 @@
-<script>
-async function register(e) {
-  e.preventDefault();
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrazione Solven AI</title>
+</head>
+<body>
 
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  <h1>Registrati su Solven AI</h1>
 
-  const res = await fetch("https://solven-ai-api.onrender.com/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password })
-  });
+  <form onsubmit="register(event)">
+    <input type="text" id="name" placeholder="Nome" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Registrati</button>
+  </form>
 
-  const data = await res.json();
-  console.log(data);
+  <script>
+    async function register(e) {
+      e.preventDefault();
 
-  alert(data.message || data.error || "Errore sconosciuto");
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-  if (res.ok) {
-    window.location.href = "login.html";
-  }
-}
-</script>
+      const res = await fetch("https://solven-ai-api.onrender.com/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const data = await res.json();
+      console.log(data);
+
+      // 🔥 Niente più undefined
+      alert(data.message || data.error || "Errore sconosciuto");
+
+      if (res.ok) {
+        window.location.href = "login.html";
+      }
+    }
+  </script>
+
+</body>
+</html>
