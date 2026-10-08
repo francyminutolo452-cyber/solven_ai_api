@@ -1,23 +1,26 @@
 <script>
 async function login(e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-  const res = await fetch("https://solven-ai-api.onrender.com/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
+    const res = await fetch("https://solven-ai-api.onrender.com/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+    });
 
-  const data = await res.json();
-  console.log(data);
+    const data = await res.json();
+    console.log("RISPOSTA SERVER:", data);
 
-  alert(data.message || data.error || "Errore sconosciuto");
+    // 🔥 Mostra QUALSIASI campo esistente
+    const msg = data.message || data.error || data.msg || data.status || "Errore sconosciuto";
+    alert(msg);
 
-  if (res.ok) {
-    window.location.href = "setup.html";
-  }
+    // 🔥 Se il server risponde con successo, vai avanti
+    if (res.ok || data.success || data.status === "ok") {
+        window.location.href = "setup.html";
+    }
 }
 </script>
