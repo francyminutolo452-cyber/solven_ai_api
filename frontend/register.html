@@ -1,12 +1,3 @@
-<h1>Registrati su Solven AI</h1>
-
-<form onsubmit="register(event)">
-  <input type="text" id="name" placeholder="Nome" required>
-  <input type="email" id="email" placeholder="Email" required>
-  <input type="password" id="password" placeholder="Password" required>
-  <button type="submit">Registrati</button>
-</form>
-
 <script>
 async function register(e) {
   e.preventDefault();
@@ -24,9 +15,10 @@ async function register(e) {
   const data = await res.json();
   console.log(data);
 
-  alert(data.message);
+  alert(data.message || data.error || "Errore sconosciuto");
 
-  // 🔥 Dopo la registrazione → vai al login
-  window.location.href = "login.html";
+  if (res.ok) {
+    window.location.href = "login.html";
+  }
 }
 </script>
