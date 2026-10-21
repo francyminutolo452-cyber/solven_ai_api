@@ -5,7 +5,7 @@ export async function solvenChat(req, res) {
         const { prompt } = req.body;
 
         // URL del tuo server Python (FastAPI) su Colab
-        const PYTHON_URL = "https://TUO-ENDPOINT-PYTHON/chat";
+        const PYTHON_URL = "https://xxxxxx.ngrok-free.app";
 
         const response = await fetch(PYTHON_URL, {
             method: "POST",
