@@ -2,6 +2,12 @@ import express from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Configurazione per ricreare __dirname con i moduli ES (import)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // MODELLO USER
 const userSchema = new mongoose.Schema({
@@ -16,6 +22,16 @@ const User = mongoose.model("User", userSchema);
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// --- AGGIUNTA FONDAMENTALE PER IL FRONTEND ---
+// Rende visibili i file statici uscendo dalla cartella routes (../) per puntare a frontend
+app.use(express.static(path.join(__dirname, "../frontend")));
+
+// Rotta principale: quando apri l'app, mostra chat.html anziché il README o una pagina vuota
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend", "chat.html"));
+});
+// ---------------------------------------------
 
 // ROTTA REGISTER
 app.post("/register", async (req, res) => {
